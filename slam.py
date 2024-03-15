@@ -17,4 +17,5 @@ https://www.geeksforgeeks.org/simultaneous-localization-and-mapping/
 
 class Slam:
     def __init__(self):
-        pass
+        self.objects = []
+        self.num_objects = 0
