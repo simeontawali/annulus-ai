@@ -1,3 +1,12 @@
+"""
+Name: simulator.py
+Authors: Tiwari
+Date Created: 3/10/24
+Date Modified: 3/15/24 SAT
+Version: 0.0.1
+References:
+"""
+
 import numpy as np
 import random
 
