@@ -16,38 +16,42 @@ from travellingSalesman import TravellingSalesman
 
 # Class
 class Simulator:
-    def __init__(self, min_length=5, max_length=10, width=5, sensor_range=1,noise=1.0):
+    def __init__(self, min_length=5, max_length=5, width=5, sensor_range=0,noise=0):
         self.width = width # y position/axis
         self.sensor_range=sensor_range
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
         self.length = random.randint(min_length, max_length) # x position/axis
         self.grid = [[set() for _ in range(self.length)] for _ in range(self.width)]
-        self.robot_pos = [width//2,0]  # Start position, middle side of pipe
-        self.debris_types = [0,1,2]  # three types of debris: metal chips, tape/residue, magnetic chips
+        self.robot_pos = [0,0]  # Start position, middle side of pipe
+        self.debris_types = ['C','T','M']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
         self.debris_locations = []
-        self.populate_debris(0.1)
+        self.populate_debris(1)
 
     def start_simulation(self):
         slam = Slam(self)
+        self.print_grid()
         slam.explore_and_map()
+        print(slam.moves)
+        self.print_grid()
 
         # slam should update the array debris locations
 
         # Convert set of debris locations to a list of coordinates for TSP
         tsp_locations = [loc for loc, _ in enumerate(self.debris_locations)]
+        print(tsp_locations)
         # Calculate distances between debris locations
-        distances = DynamicTSP.calculate_distances(tsp_locations)
-        distances2 = DynamicTSP.calculate_distances(tsp_locations)
-        dynamicTsp = DynamicTSP(distances)
-        tsp = TravellingSalesman(distances2)
+        #distances = DynamicTSP.calculate_distances(tsp_locations)
+        #distances2 = DynamicTSP.calculate_distances(tsp_locations)
+        #dynamicTsp = DynamicTSP(distances)
+        #tsp = TravellingSalesman(distances2)
         #path,cost=dynamicTsp.dynamic_tsp()
-        path,cost=tsp.tsp()
+        #path,cost=tsp.tsp()
 
         self.mode = 1
-        self.clean_path(path)
+        #self.clean_path(path)
         self.mode = 2
-        self.clean_path(path)
+        #self.clean_path(path)
 
     def clean_path(self, path):
         print("Cleaning path:", path)
@@ -80,8 +84,9 @@ class Simulator:
         for _ in range(int(self.width * self.length * density)):
             x, y = random.randint(0, self.width - 1), random.randint(0, self.length - 1)
             debris_type = random.choice(self.debris_types)
+            debris_type = 'C'
             self.grid[x][y].add(debris_type)
-            self.debris_locations.append((x, y))
+            # self.debris_locations.append((x, y))
 
     def print_grid(self):
         # Print the grid with debris locations
