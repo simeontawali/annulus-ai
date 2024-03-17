@@ -51,7 +51,7 @@ class Slam:
                     queue.append((new_x, new_y))
         cx,cy = self.simulator.robot_pos
         self.simulator.move(-cx,-cy) # return home
-        self.moves += (cx+cy)
+        self.moves += (cx+cy)    
                     
 
     def detect_debris(self, x, y):
