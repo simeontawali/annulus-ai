@@ -2,7 +2,7 @@
 Name: simulator.py
 Authors: Tiwari
 Date Created: 3/10/24
-Date Modified: 3/15/24 SAT
+Date Modified: 3/17/24 SAT
 Version: 0.0.1
 References:
 """
@@ -23,7 +23,7 @@ class Simulator:
         self.length = random.randint(min_length, max_length) # x position/axis
         self.grid = [[set() for _ in range(self.length)] for _ in range(self.width)]
         self.robot_pos = [width//2,0]  # Start position, middle side of pipe
-        self.debris_types = ['chips', 'tape', 'mag']  # three types of debris: metal chips, tape/residue, magnetic chips
+        self.debris_types = [0,1,2]  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
         self.debris_locations = []
         self.populate_debris(0.1)
@@ -31,8 +31,9 @@ class Simulator:
     def start_simulation(self):
         slam = Slam(self)
         slam.explore_and_map()
-        # path = tsp.find_path()
-        # self.clean_pipe(path)
+
+        # slam should update the array debris locations
+
         # Convert set of debris locations to a list of coordinates for TSP
         tsp_locations = [loc for loc, _ in enumerate(self.debris_locations)]
         # Calculate distances between debris locations
@@ -43,7 +44,9 @@ class Simulator:
         #path,cost=dynamicTsp.dynamic_tsp()
         path,cost=tsp.tsp()
 
-
+        self.mode = 1
+        self.clean_path(path)
+        self.mode = 2
         self.clean_path(path)
 
     def clean_path(self, path):
@@ -117,6 +120,11 @@ class Simulator:
     def switch_mode(self):
         # Switch between cleaning modes
         self.mode = (self.mode + 1) % len(self.debris_types)
+
+    def clean_grid(self,x,y):
+        if self.debris_types[self.mode] in self.grid[x][y]:
+            self.grid[x][y].remove(self.debris_types[self.mode])
+            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
 
     # TODO: cleaning functions, do cleaning if available
     def clean_current_location(self):

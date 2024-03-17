@@ -24,7 +24,7 @@ class Slam:
         self.visited = set()  # Keep track of visited locations
 
     def explore_and_map(self):
-        # Use a queue for BFS exploration, maybe DFS if we want
+        # Use a queue for BFS exploration
         queue = [tuple(self.simulator.robot_pos)]
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4 possible movements
 
@@ -34,6 +34,7 @@ class Slam:
 
             # Mark as visited
             self.visited.add((x, y))
+            self.simulator.clean_grid(x,y)
 
             # Simulate sensor detection in the current position
             self.detect_debris(x, y)
