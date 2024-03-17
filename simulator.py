@@ -27,12 +27,12 @@ class Simulator:
         self.mode = 0  # Start with the first cleaning mode
 
     def start_simulation(self):
-        slam = Slam()
+        slam = Slam(self)
         tsp = TravellingSalesman()
         dynamicTsp = DynamicTSP()
         self.populate_debris(0.1)
 
-        # slam.explore()
+        slam.explore_and_map()
         # path = tsp.find_path()
         # self.clean_pipe(path)
 
