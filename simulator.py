@@ -16,7 +16,7 @@ from travellingSalesman import TravellingSalesman
 
 # Class
 class Simulator:
-    def __init__(self, min_length=100, max_length=200, width=50, sensor_range=5.0,noise=1.0):
+    def __init__(self, min_length=5, max_length=10, width=5, sensor_range=1,noise=1.0):
         self.width = width # y position/axis
         self.sensor_range=sensor_range
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
@@ -125,3 +125,7 @@ class Simulator:
         if self.debris_types[self.mode] in self.grid[x][y]:
             self.grid[x][y].remove(self.debris_types[self.mode])
             print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
+
+
+sim = Simulator()
+sim.start_simulation()
