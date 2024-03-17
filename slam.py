@@ -16,24 +16,30 @@ https://www.geeksforgeeks.org/simultaneous-localization-and-mapping/
 """
 import random
 import numpy as np
+import math
 
 class Slam:
     def __init__(self,simulator):
         self.simulator = simulator
         self.grid = np.array(simulator.grid)  # Make a copy
         self.visited = set()  # Keep track of visited locations
+        self.moves = 0
 
     def explore_and_map(self):
-        # Use a queue for BFS exploration, maybe DFS if we want
+        # Use a queue for BFS exploration
         queue = [tuple(self.simulator.robot_pos)]
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4 possible movements
 
         while queue:
-            current_pos = queue.pop(0)
-            x, y = current_pos
+            next_pos = queue.pop(0)
+            x, y = next_pos
+            cx,cy = self.simulator.robot_pos
 
             # Mark as visited
+            self.simulator.move(x-cx,y-cy)
             self.visited.add((x, y))
+            self.moves += (abs(x-cx)) + (abs(y-cy))
+            self.simulator.clean_grid(x,y)
 
             # Simulate sensor detection in the current position
             self.detect_debris(x, y)
@@ -43,6 +49,10 @@ class Slam:
                 new_x, new_y = x + dx, y + dy
                 if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
                     queue.append((new_x, new_y))
+        cx,cy = self.simulator.robot_pos
+        self.simulator.move(-cx,-cy) # return home
+        self.moves += (cx+cy)
+                    
 
     def detect_debris(self, x, y):
         # Simulate sensor range and accuracy. For simplicity, assume 100% accuracy within sensor range.
@@ -52,6 +62,7 @@ class Slam:
             for j in range(max(0, y - sensor_range), min(self.simulator.length, y + sensor_range + 1)):
                 if self.simulator.grid[i][j]:  # If theres debris
                     # Update the local class grid with detected debris
+                    self.simulator.debris_locations.append((x, y))
                     self.grid[i][j] = self.simulator.grid[i][j].copy()
 
     def print_mapped_area(self):
