@@ -21,11 +21,9 @@ class Simulator:
         self.sensor_range=sensor_range
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
         self.length = random.randint(min_length, max_length) # x position/axis
-        self.grid = np.zeros((self.width, self.length))
+        self.grid = [[set() for _ in range(self.length)] for _ in range(self.width)]
         self.robot_pos = [width//2,0]  # Start position, middle side of pipe
-        self.debris_types = [1, 2, 3]  # three types of debris: metal chips, tape/residue, magnetic chips
-        self.debris_locations = []
-        # FIXME: should debris types be "chips","tape","mag"
+        self.debris_types = ['chips', 'tape', 'mag']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
 
     def start_simulation(self):
@@ -33,6 +31,11 @@ class Simulator:
         tsp = TravellingSalesman()
         dynamicTsp = DynamicTSP()
         self.populate_debris(0.1)
+
+        # slam.explore()
+        # path = tsp.find_path()
+        # self.clean_pipe(path)
+
 
     def update_slam(self):
         # update slam
@@ -52,44 +55,54 @@ class Simulator:
 
 
     def populate_debris(self, density=0.1):
+        # Populate grid with debris, allowing multiple types at each location
         for _ in range(int(self.width * self.length * density)):
             x, y = random.randint(0, self.width - 1), random.randint(0, self.length - 1)
-            self.grid[x][y] = random.choice(self.debris_types)
-            # TODO: allow one grid location to store multiple debris types
+            debris_type = random.choice(self.debris_types)
+            self.grid[x][y].add(debris_type)
 
     def print_grid(self):
-        print(self.grid.T)  # Transpose and visualization
+        # Print the grid with debris locations
+        for row in self.grid:
+            print(' '.join([str(len(cell)) if cell else '.' for cell in row]))
 
     # returns a positive, random float
     def rand(self):
         return random.random() * 2.0 - 1.0
     
 
-    # main move function
-    def move(self, dx, dy):    
-        x = self.robot_pos[0] + dx + (self.rand()*2.0-1.0) * self.noise
-        y = self.robot_pos[1] + dy + (self.rand()*2.0-1.0) * self.noise
+    # # main move function
+    # def move(self, dx, dy):    
+    #     x = self.robot_pos[0] + dx + (self.rand()*2.0-1.0) * self.noise
+    #     y = self.robot_pos[1] + dy + (self.rand()*2.0-1.0) * self.noise
 
-        # ensure bounds followed
-        if 0 <= x < self.width and 0 <= y < self.length:
-            self.robot_pos = [int(x), int(y)]
-            return True
-        return False
+    #     # ensure bounds followed
+    #     if 0 <= x < self.width and 0 <= y < self.length:
+    #         self.robot_pos = [int(x), int(y)]
+    #         return True
+    #     return False
 
 
-    # other move function?? may not work for left/right
-    def move_robot(self, direction):
-        if direction == 'up' and self.robot_pos[0] > 0:
-            self.robot_pos = (self.robot_pos[0] - 1, self.robot_pos[1])
-        elif direction == 'down' and self.robot_pos[0] < self.width - 1:
-            self.robot_pos = (self.robot_pos[0] + 1, self.robot_pos[1])
-        elif direction == 'right' and self.robot_pos[1] < self.length - 1:
-            self.robot_pos = (self.robot_pos[0], self.robot_pos[1] + 1)
-        elif direction == 'left' and self.robot_pos[1] < self.length - 1:
-            self.robot_pos = (self.robot_pos[0], self.robot_pos[1] - 1)
+    def move(self, dx, dy):
+        x, y = self.robot_pos
+        x += dx + (self.rand() * self.noise)
+        y += dy + (self.rand() * self.noise)
+        # Clamp values to ensure bounds
+        x = max(0, min(x, self.width - 1))
+        y = max(0, min(y, self.length - 1))
+        self.robot_pos = [int(x), int(y)]
 
 
 
     # TODO: cleaning mode functions, switch between three cleaning modes
+    def switch_mode(self):
+        # Switch between cleaning modes
+        self.mode = (self.mode + 1) % len(self.debris_types)
+
     # TODO: cleaning functions, do cleaning if available
-    
+    def clean_current_location(self):
+        # Clean debris at the robot's current position based on the current mode
+        x, y = self.robot_pos
+        if self.debris_types[self.mode] in self.grid[x][y]:
+            self.grid[x][y].remove(self.debris_types[self.mode])
+            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
