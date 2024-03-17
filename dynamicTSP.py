@@ -27,14 +27,14 @@ class DynamicTSP:
         shallow_dis = distances
         # Reconstruct path
         node_path = [0]
-        cost = 0
+        #cost = 0
         for liss in shallow_dis:
             for dis in liss:
                 to_next = liss.index(min(liss))
                 if(to_next in node_path):
                     liss[to_next] = sys.maxsize
                 else:
-                    cost += liss[to_next]
+                    #cost += liss[to_next]
                     node_path.append(to_next)
                     break
         node_path.append(0)
@@ -45,8 +45,8 @@ class DynamicTSP:
             path.append(debris_locations[node])
 
         print(path)
-        print(cost)
-        return path, cost
+        #print(cost)
+        return path #, cost
     
     
     
