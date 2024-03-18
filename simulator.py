@@ -20,14 +20,13 @@ from timeit import default_timer
 
 # Class
 class Simulator:
-    def __init__(self, min_length=5, max_length=15, width=15, sensor_range=0,noise=0):
+    def __init__(self, min_length=5, max_length=55, width=15,noise=0):
         self.width = width # y position/axis
-        self.sensor_range=sensor_range
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
         self.length = random.randint(min_length, max_length) # x position/axis
         self.grid = [[set() for _ in range(self.length)] for _ in range(self.width)]
         self.robot_pos = [0,0]  # Start position, middle side of pipe
-        self.debris_types = ['C','T']  # three types of debris: metal chips, tape/residue, magnetic chips
+        self.debris_types = ['Chips','Tape']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
         self.optimized_moves = 0
         self.debris_locations = []
@@ -98,23 +97,6 @@ class Simulator:
                 print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}", end="\r")
 
 
-    def update_slam(self):
-        # update slam
-        # TODO: logic here, update pos and debris?
-        pass
-
-    def tsp_optimization(self):
-        # TODO: finish me
-        pass
-
-    def clean_pipe(self, optimized_path):
-        pass
-
-    def get_debris(self):
-        # TODO: Based on exploration, return a list of debris locations
-        return []
-
-
     def populate_debris(self, density=0.1):
         # Populate grid with debris, allowing multiple types at each location
         for _ in range(int(self.width * self.length * density)):
@@ -132,19 +114,6 @@ class Simulator:
     def rand(self):
         return random.random() * 2.0 - 1.0
     
-
-    # # main move function
-    # def move(self, dx, dy):    
-    #     x = self.robot_pos[0] + dx + (self.rand()*2.0-1.0) * self.noise
-    #     y = self.robot_pos[1] + dy + (self.rand()*2.0-1.0) * self.noise
-
-    #     # ensure bounds followed
-    #     if 0 <= x < self.width and 0 <= y < self.length:
-    #         self.robot_pos = [int(x), int(y)]
-    #         return True
-    #     return False
-
-
     def move(self, dx, dy):
         x, y = self.robot_pos
         x += dx + (self.rand() * self.noise)
@@ -153,10 +122,8 @@ class Simulator:
         x = max(0, min(x, self.width - 1))
         y = max(0, min(y, self.length - 1))
         self.robot_pos = [int(x), int(y)]
+        print(f"Pos: {x}, {y}", end="\r")
 
-
-
-    # TODO: cleaning mode functions, switch between three cleaning modes
     def switch_mode(self):
         # Switch between cleaning modes
         self.mode = (self.mode + 1) % len(self.debris_types)
@@ -166,7 +133,7 @@ class Simulator:
             self.grid[x][y].remove(self.debris_types[self.mode])
             print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
 
-    # TODO: cleaning functions, do cleaning if available
+    # cleaning functions, do cleaning if available
     def clean_current_location(self):
         # Clean debris at the robot's current position based on the current mode
         x, y = self.robot_pos
