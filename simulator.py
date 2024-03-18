@@ -12,7 +12,8 @@ import sys
 import numpy as np
 import random
 from slam import Slam
-from dynamicTSP import DynamicTSP
+from dynamicTSP import dynamic_tsp
+from halfDynamicSalesman import HalfDynamicTSP
 from travellingSalesman import TravellingSalesman
 
 # Class
@@ -43,8 +44,13 @@ class Simulator:
         #self.clean_path(path)
         #print(self.debris_locations)
         typeDistances = Simulator.create_distances(self.debris_locations)
-        dynaTSPpath = DynamicTSP.dynamic_tsp(typeDistances, self.debris_locations)
-        print(dynaTSPpath)
+        #dynaTSPpath = HalfDynamicTSP.dynamic_tsp(typeDistances)
+        newList = []
+        for i in range(len(typeDistances)):
+            newList.append(i)
+        print(newList)
+        print(dynamic_tsp(newList, 0, 0, [0]*len(typeDistances), typeDistances))
+        #print(dynaTSPpath)
 
         #self.clean_path(path)
 
