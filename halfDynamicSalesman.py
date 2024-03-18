@@ -45,7 +45,7 @@ class HalfDynamicTSP:
         node_path.append(0)
 
         #print(node_path)
-        print(cost)
+        #print(cost)
         return node_path, cost
     
     

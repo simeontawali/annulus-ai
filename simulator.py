@@ -57,7 +57,7 @@ class Simulator:
 
         print(f"\nDynamic TSP gives an optimized path of: {dynaTSPpath}\n")
         self.clean_path(path)
-        print(f"Dynamic TSP took {cost} moves\n")
+        print(f"\nDynamic TSP took {cost} moves\n")
         print("Final Grid:")
         self.print_grid()
 
