@@ -62,7 +62,7 @@ class Slam:
             for j in range(max(0, y - sensor_range), min(self.simulator.length, y + sensor_range + 1)):
                 if self.simulator.grid[i][j]:  # If theres debris
                     # Update the local class grid with detected debris
-                    self.simulator.debris_locations.append((x, y))
+                    self.simulator.debris_locations.add((x, y))
                     self.grid[i][j] = self.simulator.grid[i][j].copy()
 
     def print_mapped_area(self):
