@@ -2,7 +2,7 @@
 Name: simulator.py
 Authors: Tiwari
 Date Created: 3/10/24
-Date Modified: 3/17/24 SAT
+Date Modified: 3/17/24 TSA, YN
 Version: 0.0.1
 References:
 """
@@ -14,10 +14,11 @@ import random
 from slam import Slam
 from dynamicTSP import DynamicTSP
 from travellingSalesman import TravellingSalesman
+import os, time
 
 # Class
 class Simulator:
-    def __init__(self, min_length=5, max_length=5, width=5, sensor_range=0,noise=0):
+    def __init__(self, min_length=5, max_length=15, width=15, sensor_range=0,noise=0):
         self.width = width # y position/axis
         self.sensor_range=sensor_range
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
@@ -75,7 +76,7 @@ class Simulator:
             self.optimized_moves += (abs(next_x-current_x)+abs(next_y-current_y))
             if self.debris_types[self.mode] in self.grid[next_x][next_y]:
                 self.grid[next_x][next_y].remove(self.debris_types[self.mode])
-                print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}")
+                print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}", end="\r")
 
 
     def update_slam(self):
@@ -144,7 +145,7 @@ class Simulator:
     def clean_grid(self,x,y):
         if self.debris_types[self.mode] in self.grid[x][y]:
             self.grid[x][y].remove(self.debris_types[self.mode])
-            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
+            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
 
     # TODO: cleaning functions, do cleaning if available
     def clean_current_location(self):
@@ -152,7 +153,21 @@ class Simulator:
         x, y = self.robot_pos
         if self.debris_types[self.mode] in self.grid[x][y]:
             self.grid[x][y].remove(self.debris_types[self.mode])
-            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
+            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
+        
+    def updatable_grid(self):
+        # clear
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+        # iter over each row and column to print the grid
+        for i, row in enumerate(self.grid):
+            row_str = ''
+            for j, cell in enumerate(row):
+                if [i, j] == self.robot_pos:
+                    row_str += 'X  '  # position with 'X'
+                else:
+                    row_str += (str(len(cell)) + ' ') if cell else '.  '  # '.' for empty
+            print(row_str.rstrip())  # each row of the grid
 
 
 sim = Simulator()

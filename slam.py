@@ -8,10 +8,11 @@ SLAM builds a map and localizes the vehicle in that map at the same time.
 
 Authors: Tiwari, Yuen
 Date Created: 3/11/24
-Date Modified: 3/15/24 SAT
+Date Modified: 3/17/24 TSA, YN
 Version: 0.0.1
 References:
 https://www.geeksforgeeks.org/simultaneous-localization-and-mapping/
+https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
 
 """
 import random
@@ -31,24 +32,36 @@ class Slam:
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4 possible movements
 
         while queue:
-            next_pos = queue.pop(0)
-            x, y = next_pos
-            cx,cy = self.simulator.robot_pos
-
+            #next_pos = queue.pop(0)
+            #x, y = next_pos
+            #cx,cy = self.simulator.robot_pos
+            current_pos = queue.pop(0)
+            self.visited.add(current_pos)
+            cx,cy = current_pos
             # Mark as visited
-            self.simulator.move(x-cx,y-cy)
-            self.visited.add((x, y))
-            self.moves += (abs(x-cx)) + (abs(y-cy))
-            self.simulator.clean_grid(x,y)
+            #self.simulator.move(x-cx,y-cy)
+            #self.visited.add((x, y))
+            #self.moves += (abs(x-cx)) + (abs(y-cy))
+            #self.simulator.clean_grid(x,y)
 
             # Simulate sensor detection in the current position
-            self.detect_debris(x, y)
-
+            # self.detect_debris(x, y)
+            self.detect_debris(cx, cy)
             # Explore neighboring cells
             for dx, dy in directions:
-                new_x, new_y = x + dx, y + dy
-                if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
-                    queue.append((new_x, new_y))
+                new_pos = (current_pos[0] + dx, current_pos[1] + dy)
+                nx,ny = new_pos
+                # new_x, new_y = x + dx, y + dy
+                #if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
+                    #queue.append((new_x, new_y))
+                if (0 <= new_pos[0] < self.simulator.width) and (0 <= new_pos[1] < self.simulator.length) and ((new_pos[0], new_pos[1]) not in self.visited):
+                    queue.append(new_pos)
+                    self.visited.add(new_pos)
+                    self.simulator.updatable_grid()
+                    self.simulator.move(dx, dy)
+                    self.detect_debris(nx,ny)
+                    self.moves += abs(dx)+abs(dy)
+                    self.simulator.clean_grid(nx,ny)
         cx,cy = self.simulator.robot_pos
         self.simulator.move(-cx,-cy) # return home
         self.moves += (cx+cy)    
@@ -56,7 +69,6 @@ class Slam:
 
     def detect_debris(self, x, y):
         # Simulate sensor range and accuracy. For simplicity, assume 100% accuracy within sensor range.
-        # TODO: incorporate inacuracy
         sensor_range = self.simulator.sensor_range
         for i in range(max(0, x - sensor_range), min(self.simulator.width, x + sensor_range + 1)):
             for j in range(max(0, y - sensor_range), min(self.simulator.length, y + sensor_range + 1)):
