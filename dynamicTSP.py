@@ -25,7 +25,7 @@ class DynamicTSP:
         #self.parent = [[-1 for _ in range(self.n)] for __ in range(1 << self.n)]
 
     
-def dynamic_tsp(N, s, cost, visited, distances):
+def dynamic_tsp(subN, s, cost, visited, distances):
     # intially N = [0 -> len(distances)]
     # intially cost = 0
     # initially visted = [0]*len(N)
@@ -33,16 +33,11 @@ def dynamic_tsp(N, s, cost, visited, distances):
     # DP to compute minimum cost
     # Reconstruct path
     visited[s] = 1
-    if (len(N) == 2 and N[-1] != s):
-        cost += distances[N[0]] + distances[N[1]]
+    if(len(subN) == 2 and subN[-1] != s):
+        cost += distances[subN[0]][subN[1]]
         return cost
     else:
-        for j in N:
-            min_paths = []
-            for i in N:
-                    if(visited[i] == 0 and j != i and j != s):
-                        min_paths.append(dynamic_tsp(N.remove(i), j, cost, visited, distances) + distances[j][i])
-                        visited[j] = 1
-            return cost
-
-
+        min_paths = []
+        for i in subN:
+            min_paths.append(dynamic_tsp(subN.remove(s), i, cost, visited, distances))
+    return cost
