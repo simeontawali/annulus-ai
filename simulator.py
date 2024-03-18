@@ -20,7 +20,7 @@ from timeit import default_timer
 
 # Class
 class Simulator:
-    def __init__(self, min_length=1000, max_length=1000, width=250,noise=0):
+    def __init__(self, min_length=15, max_length=15, width=15,noise=0):
         self.width = width # y position/axis
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
         self.length = random.randint(min_length, max_length) # x position/axis
@@ -34,16 +34,16 @@ class Simulator:
 
     def start_simulation(self):
         slam = Slam(self)
-        #print("Initial Grid")
-        #self.print_grid()
+        print("Initial Grid")
+        self.print_grid()
 
         start = default_timer()
         slam.explore_and_map()
         print(f"Slam took {default_timer() - start} seconds")
 
         print(f"\nSlam takes: {slam.moves} moves\n")
-        #print("New Grid after Slam:")
-        #self.print_grid()
+        print("New Grid after Slam:")
+        self.print_grid()
         # slam should update the array debris locations
         print("\nRobot returns home and changes cleaning mode\n")
         self.switch_mode()
@@ -55,11 +55,11 @@ class Simulator:
         path,cost = dynaTSPpath
         print(f"HalfDynaTSP took {default_timer() - start} seconds")
 
-        #print(f"\nDynamic TSP gives an optimized path of: {dynaTSPpath}\n")
+        print(f"\nDynamic TSP gives an optimized path of: {dynaTSPpath}\n")
         self.clean_path(path)
-        print(f"Dynamic TSP took {cost} moves")
-        #print("Final Grid:")
-        #self.print_grid()
+        print(f"Dynamic TSP took {cost} moves\n")
+        print("Final Grid:")
+        self.print_grid()
 
         #dynaTSPpath = HalfDynamicTSP.dynamic_tsp(typeDistances)
         # newList = []
@@ -87,7 +87,7 @@ class Simulator:
         return all_distances
 
     def clean_path(self, path):
-        #print("Cleaning path:", path)
+        print("Cleaning path:", path)
         for i in path:
             current_x, current_y = self.robot_pos
             next_x, next_y = self.debris_locations[i]
@@ -95,7 +95,7 @@ class Simulator:
             self.optimized_moves += (abs(next_x-current_x)+abs(next_y-current_y))
             if self.debris_types[self.mode] in self.grid[next_x][next_y]:
                 self.grid[next_x][next_y].remove(self.debris_types[self.mode])
-                #print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}", end="\r")
+                print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}", end="\r")
 
 
     def populate_debris(self, density=0.1):
@@ -123,7 +123,7 @@ class Simulator:
         x = max(0, min(x, self.width - 1))
         y = max(0, min(y, self.length - 1))
         self.robot_pos = [int(x), int(y)]
-        #print(f"Pos: {x}, {y}", end="\r")
+        print(f"Pos: {x}, {y}", end="\r")
 
     def switch_mode(self):
         # Switch between cleaning modes
@@ -132,7 +132,7 @@ class Simulator:
     def clean_grid(self,x,y):
         if self.debris_types[self.mode] in self.grid[x][y]:
             self.grid[x][y].remove(self.debris_types[self.mode])
-            #print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
+            print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
 
     # cleaning functions, do cleaning if available
     def clean_current_location(self):
