@@ -39,14 +39,9 @@ class DynamicTSP:
                     break
         node_path.append(0)
 
-        path = []
-
-        for node in node_path:
-            path.append(debris_locations[node])
-
-        print(path)
+        print(node_path)
         print(cost)
-        return path, cost
+        return node_path, cost
     
     
     
