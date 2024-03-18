@@ -8,6 +8,7 @@ References:
 """
 
 # Imports
+import sys
 import numpy as np
 import random
 from slam import Slam
@@ -37,21 +38,34 @@ class Simulator:
 
         # slam should update the array debris locations
 
-        # Convert set of debris locations to a list of coordinates for TSP
-        tsp_locations = [loc for loc, _ in enumerate(self.debris_locations)]
-        print(tsp_locations)
         # Calculate distances between debris locations
-        #distances = DynamicTSP.calculate_distances(tsp_locations)
-        #distances2 = DynamicTSP.calculate_distances(tsp_locations)
-        #dynamicTsp = DynamicTSP(distances)
-        #tsp = TravellingSalesman(distances2)
-        #path,cost=dynamicTsp.dynamic_tsp()
-        #path,cost=tsp.tsp()
+        
+
+        # Call DynaTSP to calculate optimal pat and it's total move cost
+
+
 
         self.mode = 1
         #self.clean_path(path)
+        #print(self.debris_locations)
+        print(Simulator.create_distances(self.debris_locations))
         self.mode = 2
         #self.clean_path(path)
+
+
+    def create_distances(debris_locs):
+        all_distances = []
+        for i in range(len(debris_locs)):
+            node_distances = []
+            for j in range(len(debris_locs)):
+                if(debris_locs[i] == debris_locs[j]):
+                    node_distances.append(sys.maxsize)
+                else:
+                    moves = abs(debris_locs[j][0] - debris_locs[i][0]) + abs(debris_locs[j][1] - debris_locs[i][1])
+                    node_distances.append(moves)
+            all_distances.append(node_distances)
+
+        return all_distances
 
     def clean_path(self, path):
         print("Cleaning path:", path)
@@ -84,7 +98,6 @@ class Simulator:
         for _ in range(int(self.width * self.length * density)):
             x, y = random.randint(0, self.width - 1), random.randint(0, self.length - 1)
             debris_type = random.choice(self.debris_types)
-            debris_type = 'C'
             self.grid[x][y].add(debris_type)
             # self.debris_locations.append((x, y))
 
