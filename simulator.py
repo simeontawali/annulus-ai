@@ -24,7 +24,7 @@ class Simulator:
         self.length = random.randint(min_length, max_length) # x position/axis
         self.grid = [[set() for _ in range(self.length)] for _ in range(self.width)]
         self.robot_pos = [0,0]  # Start position, middle side of pipe
-        self.debris_types = ['C','T','M']  # three types of debris: metal chips, tape/residue, magnetic chips
+        self.debris_types = ['C','T']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
         self.optimized_moves = 0
         self.debris_locations = []
@@ -39,15 +39,13 @@ class Simulator:
 
         # slam should update the array debris locations
 
-        self.mode = 1
+        self.switch_mode()
         #self.clean_path(path)
         #print(self.debris_locations)
         typeDistances = Simulator.create_distances(self.debris_locations)
         dynaTSPpath = DynamicTSP.dynamic_tsp(typeDistances, self.debris_locations)
         print(dynaTSPpath)
 
-        
-        self.mode = 2
         #self.clean_path(path)
 
 
