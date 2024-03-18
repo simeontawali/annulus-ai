@@ -34,10 +34,15 @@ class Slam:
         while queue:
             #next_pos = queue.pop(0)
             #x, y = next_pos
-            gx,gy = self.simulator.robot_pos
-            current_pos = queue.pop(0)
-            self.visited.add(current_pos)
+            current_pos = self.simulator.robot_pos
+            candidate_pos = queue.pop(0)
             cx,cy = current_pos
+            nx,ny=candidate_pos
+            if candidate_pos not in self.visited:
+                self.visited.add(candidate_pos)
+            dx,dy = nx-cx,ny-cy
+            self.simulator.move(dx,dy)
+            self.moves += (abs(dx)+abs(dy))
             # Mark as visited
             #self.simulator.move(x-cx,y-cy)
             #self.visited.add((x, y))
@@ -46,22 +51,21 @@ class Slam:
 
             # Simulate sensor detection in the current position
             # self.detect_debris(x, y)
-            self.detect_debris(cx, cy)
-            self.simulator.clean_grid(cx,cy)
+            self.detect_debris(nx, ny)
+
+            #self.simulator.clean_grid(cx,cy)
             # Explore neighboring cells
             for dx, dy in directions:
-                new_pos = (current_pos[0] + dx, current_pos[1] + dy)
-                nx,ny = new_pos
+                new_pos = (nx + dx, ny + dy)
+                new_x,new_y = new_pos
                 # new_x, new_y = x + dx, y + dy
-                #if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
-                    #queue.append((new_x, new_y))
-                if (0 <= new_pos[0] < self.simulator.width) and (0 <= new_pos[1] < self.simulator.length) and ((new_pos[0], new_pos[1]) not in self.visited):
+                if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
                     queue.append(new_pos)
-                    self.visited.add(new_pos)
-                    self.simulator.move(dx, dy)
-                    self.detect_debris(nx,ny)
-                    self.moves += abs(dx)+abs(dy)
-                    self.simulator.clean_grid(nx,ny)
+                    # self.visited.add(new_pos)
+                    # self.simulator.move(dx, dy)
+                    # self.detect_debris(nx,ny)
+                    # self.moves += abs(dx)+abs(dy)
+                    # self.simulator.clean_grid(nx,ny)
         cx,cy = self.simulator.robot_pos
         self.simulator.move(-cx,-cy) # return home
         self.moves += (cx+cy)    
@@ -69,14 +73,19 @@ class Slam:
 
     def detect_debris(self, x, y):
         # Simulate sensor range and accuracy. For simplicity, assume 100% accuracy within sensor range.
-        sensor_range = self.simulator.sensor_range
-        for i in range(max(0, x - sensor_range), min(self.simulator.width, x + sensor_range + 1)):
-            for j in range(max(0, y - sensor_range), min(self.simulator.length, y + sensor_range + 1)):
-                if self.simulator.grid[i][j]:  # If theres debris
+       # sensor_range = self.simulator.sensor_range
+       # for i in range(max(0, x - sensor_range), min(self.simulator.width, x + sensor_range + 1)):
+        #    for j in range(max(0, y - sensor_range), min(self.simulator.length, y + sensor_range + 1)):
+             #   if self.simulator.grid[i][j]:  # If theres debris
                     # Update the local class grid with detected debris
-                    if((x,y) not in self.simulator.debris_locations):
-                        self.simulator.debris_locations.append((x, y))
-                    self.grid[i][j] = self.simulator.grid[i][j].copy()
+              #      if((x,y) not in self.simulator.debris_locations):
+               #         self.simulator.debris_locations.append((x, y))
+                #    self.grid[i][j] = self.simulator.grid[i][j].copy()
+        if self.simulator.grid[x][y]:  # If there's debris
+            if (x, y) not in self.simulator.debris_locations:
+                self.simulator.debris_locations.append((x, y))
+                self.simulator.clean_grid(x,y)
+
 
     def print_mapped_area(self):
         # Print the mapped area for visualization
