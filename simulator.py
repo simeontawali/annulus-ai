@@ -39,17 +39,14 @@ class Simulator:
 
         # slam should update the array debris locations
 
-        # Calculate distances between debris locations
-        
-
-        # Call DynaTSP to calculate optimal pat and it's total move cost
-
-
-
         self.mode = 1
         #self.clean_path(path)
-        print(self.debris_locations)
-        #print(Simulator.create_distances(self.debris_locations))
+        #print(self.debris_locations)
+        typeDistances = Simulator.create_distances(self.debris_locations)
+        dynaTSPpath = DynamicTSP.dynamic_tsp(typeDistances, self.debris_locations)
+        print(dynaTSPpath)
+
+        
         self.mode = 2
         #self.clean_path(path)
 
