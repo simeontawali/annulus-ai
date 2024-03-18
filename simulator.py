@@ -16,6 +16,7 @@ from dynamicTSP import dynamic_tsp
 from halfDynamicSalesman import HalfDynamicTSP
 from travellingSalesman import TravellingSalesman
 import os, time
+from timeit import default_timer
 
 # Class
 class Simulator:
@@ -36,7 +37,11 @@ class Simulator:
         slam = Slam(self)
         print("Initial Grid")
         self.print_grid()
+
+        start = default_timer()
         slam.explore_and_map()
+        print(f"Slam took {default_timer() - start} seconds")
+
         print(f"\nSlam takes: {slam.moves} moves\n")
         print("New Grid after Slam:")
         self.print_grid()
@@ -45,9 +50,12 @@ class Simulator:
         self.switch_mode()
         #self.clean_path(path)
         #print(self.debris_locations)
+        start = default_timer()
         typeDistances = Simulator.create_distances(self.debris_locations)
         dynaTSPpath = HalfDynamicTSP.dynamic_tsp(typeDistances)
         path,cost = dynaTSPpath
+        print(f"HalfDynaTSP took {default_timer() - start} seconds")
+
         print(f"\nDynamic TSP gives an optimized path of: {dynaTSPpath}\n")
         self.clean_path(path)
         print(f"Dynamic TSP took {cost} or {self.optimized_moves} moves")
