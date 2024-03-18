@@ -89,24 +89,6 @@ class Simulator:
                 self.grid[next_x][next_y].remove(self.debris_types[self.mode])
                 print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}", end="\r")
 
-
-    def update_slam(self):
-        # update slam
-        # TODO: logic here, update pos and debris?
-        pass
-
-    def tsp_optimization(self):
-        # TODO: finish me
-        pass
-
-    def clean_pipe(self, optimized_path):
-        pass
-
-    def get_debris(self):
-        # TODO: Based on exploration, return a list of debris locations
-        return []
-
-
     def populate_debris(self, density=0.1):
         # Populate grid with debris, allowing multiple types at each location
         for _ in range(int(self.width * self.length * density)):
@@ -148,7 +130,6 @@ class Simulator:
 
 
 
-    # TODO: cleaning mode functions, switch between three cleaning modes
     def switch_mode(self):
         # Switch between cleaning modes
         self.mode = (self.mode + 1) % len(self.debris_types)
@@ -158,7 +139,7 @@ class Simulator:
             self.grid[x][y].remove(self.debris_types[self.mode])
             print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}", end="\r")
 
-    # TODO: cleaning functions, do cleaning if available
+    # cleaning functions, do cleaning if available
     def clean_current_location(self):
         # Clean debris at the robot's current position based on the current mode
         x, y = self.robot_pos

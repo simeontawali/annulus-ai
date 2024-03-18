@@ -47,7 +47,7 @@ class Slam:
             # Simulate sensor detection in the current position
             # self.detect_debris(x, y)
             self.detect_debris(cx, cy)
-            self.simulator.clean_grid(nx,ny)
+            self.simulator.clean_grid(cx,cy)
             # Explore neighboring cells
             for dx, dy in directions:
                 new_pos = (current_pos[0] + dx, current_pos[1] + dy)
