@@ -32,22 +32,25 @@ class Simulator:
 
     def start_simulation(self):
         slam = Slam(self)
+        print("Initial Grid")
         self.print_grid()
         slam.explore_and_map()
-        print(slam.moves)
+        print(f"\nSlam takes: {slam.moves} moves\n")
+        print("New Grid after Slam:")
         self.print_grid()
-
         # slam should update the array debris locations
-
+        print("\nRobot returns home and changes cleaning mode\n")
         self.switch_mode()
         #self.clean_path(path)
         #print(self.debris_locations)
         typeDistances = Simulator.create_distances(self.debris_locations)
         dynaTSPpath = DynamicTSP.dynamic_tsp(typeDistances, self.debris_locations)
-        print(dynaTSPpath)
-
-        #self.clean_path(path)
-
+        path,cost = dynaTSPpath
+        print(f"\nDynamic TSP gives an optimized path of: {dynaTSPpath}\n")
+        self.clean_path(path)
+        print(f"Dynamic TSP took {cost} or {self.optimized_moves} moves")
+        print("Final Grid:")
+        self.print_grid()
 
     def create_distances(debris_locs):
         all_distances = []
