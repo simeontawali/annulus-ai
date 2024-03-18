@@ -26,7 +26,8 @@ class Simulator:
         self.robot_pos = [0,0]  # Start position, middle side of pipe
         self.debris_types = ['C','T','M']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
-        self.debris_locations = []
+        self.optimized_moves = 0
+        self.debris_locations = set()
         self.populate_debris(1)
 
     def start_simulation(self):
@@ -70,10 +71,13 @@ class Simulator:
     def clean_path(self, path):
         print("Cleaning path:", path)
         for i in path:
-            x, y = self.debris_locations[i]
-            if self.debris_types[self.mode] in self.grid[x][y]:
-                self.grid[x][y].remove(self.debris_types[self.mode])
-                print(f"Cleaned {self.debris_types[self.mode]} at {x}, {y}")
+            current_x, current_y = self.robot_pos
+            next_x, next_y = self.debris_locations[i]
+            self.move(next_x-current_x,next_y-current_y)
+            self.optimized_moves += (abs(next_x-current_x)+abs(next_y-current_y))
+            if self.debris_types[self.mode] in self.grid[next_x][next_y]:
+                self.grid[next_x][next_y].remove(self.debris_types[self.mode])
+                print(f"Cleaned {self.debris_types[self.mode]} at {next_x}, {next_y}")
 
 
     def update_slam(self):
