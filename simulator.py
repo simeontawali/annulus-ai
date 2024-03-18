@@ -27,7 +27,7 @@ class Simulator:
         self.debris_types = ['C','T','M']  # three types of debris: metal chips, tape/residue, magnetic chips
         self.mode = 0  # Start with the first cleaning mode
         self.optimized_moves = 0
-        self.debris_locations = set()
+        self.debris_locations = []
         self.populate_debris(1)
 
     def start_simulation(self):
@@ -48,8 +48,8 @@ class Simulator:
 
         self.mode = 1
         #self.clean_path(path)
-        #print(self.debris_locations)
-        print(Simulator.create_distances(self.debris_locations))
+        print(self.debris_locations)
+        #print(Simulator.create_distances(self.debris_locations))
         self.mode = 2
         #self.clean_path(path)
 
