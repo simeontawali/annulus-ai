@@ -46,17 +46,3 @@ def dynamic_tsp(N, s, cost, visited, distances):
             return cost
 
 
-        
-
-    
-    
-
-    
-    
-    
-
-
-
-
-
-
