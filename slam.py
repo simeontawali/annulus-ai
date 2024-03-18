@@ -32,8 +32,6 @@ class Slam:
         directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # 4 possible movements
 
         while queue:
-            #next_pos = queue.pop(0)
-            #x, y = next_pos
             current_pos = self.simulator.robot_pos
             candidate_pos = queue.pop(0)
             cx,cy = current_pos
@@ -43,16 +41,7 @@ class Slam:
             dx,dy = nx-cx,ny-cy
             self.simulator.move(dx,dy)
             self.moves += (abs(dx)+abs(dy))
-            # Mark as visited
-            #self.simulator.move(x-cx,y-cy)
-            #self.visited.add((x, y))
-            #self.moves += (abs(x-cx)) + (abs(y-cy))
-            #self.simulator.clean_grid(x,y)
-
-            # Simulate sensor detection in the current position
-            # self.detect_debris(x, y)
             self.detect_debris(nx, ny)
-
             #self.simulator.clean_grid(cx,cy)
             # Explore neighboring cells
             for dx, dy in directions:
@@ -61,6 +50,8 @@ class Slam:
                 # new_x, new_y = x + dx, y + dy
                 if (0 <= new_x < self.simulator.width) and (0 <= new_y < self.simulator.length) and ((new_x, new_y) not in self.visited):
                     queue.append(new_pos)
+                    if new_pos not in self.visited:
+                        self.visited.add(new_pos)
                     # self.visited.add(new_pos)
                     # self.simulator.move(dx, dy)
                     # self.detect_debris(nx,ny)

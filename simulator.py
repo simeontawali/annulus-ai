@@ -20,7 +20,7 @@ from timeit import default_timer
 
 # Class
 class Simulator:
-    def __init__(self, min_length=5, max_length=55, width=35,noise=0):
+    def __init__(self, min_length=5, max_length=55, width=15,noise=0):
         self.width = width # y position/axis
         self.noise = noise # we may introduce a noise variable to account for bad measurements that may happen
         self.length = random.randint(min_length, max_length) # x position/axis
@@ -122,6 +122,7 @@ class Simulator:
         x = max(0, min(x, self.width - 1))
         y = max(0, min(y, self.length - 1))
         self.robot_pos = [int(x), int(y)]
+        print(f"Pos: {x}, {y}", end="\r")
 
     def switch_mode(self):
         # Switch between cleaning modes
