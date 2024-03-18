@@ -34,6 +34,7 @@ class Slam:
         while queue:
             current_pos = self.simulator.robot_pos
             candidate_pos = queue.pop(0)
+            # print(candidate_pos)
             cx,cy = current_pos
             nx,ny=candidate_pos
             if candidate_pos not in self.visited:
